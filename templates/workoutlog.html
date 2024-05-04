@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Workout Log
+{% endblock %}
+
+{% block main %}
+
+  <h1>Workout Log</h1>
+
+  <form action="/workoutlog" method="post">
+    <button type="submit">New Workout</button>
+  </form>
+
+  {% for workout in workouts %}
+  <tr>
+    <td>{{ workout.date }}</td>
+    <td>{{ workout.user_id }}</td>
+  </tr>
+  <br>
+
+  <form action="/workoutlog" method="post">
+    <input autocomplete="off" autofocus name="exercise-name" placeholder="Name" type="text">
+    <input autocomplete="off" name="sets" placeholder="Sets" type="number">
+    <input autocomplete="off" name="reps" placeholder="Reps" type="number">
+    <button type="submit">Add Exercise</button>
+  </form>
+  {% endfor %}
+    
+{% endblock %}

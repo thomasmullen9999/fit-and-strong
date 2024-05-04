@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Exercise List
+{% endblock %}
+
+{% block main %}
+
+  <h1>Exercise List</h1>
+
+  <table>
+    <tr>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Muscles Worked</th>
+    </tr>
+    <!-- Loop through the exercises to display each one in the table -->
+    {% for exercise in exercises %}
+    <tr>
+        <td>{{ exercise.name }}</td>
+        <td>{{ exercise.description }}</td>
+        <td>{{ exercise.muscles_used }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<form action="/exerciselist" method="post">
+  <div>
+      <input autocomplete="off" autofocus name="exercise-name" placeholder="Name" type="text">
+      <input autocomplete="off" name="exercise-desc" placeholder="Description" type="text">
+      <input autocomplete="off" name="exercise-muscles" placeholder="Muscles Worked" type="text">
+  </div>
+  <button type="submit">Add New Exercise</button>
+</form>
+
+<h1>Filter</h1>
+
+<form action="/exerciselist" method="post">
+  <div>
+      <select name="muscle">
+          <option disabled selected value="">Muscle</option>
+              <option value="biceps">Biceps</option>
+              <option value="biceps">Triceps</option>
+      </select>
+  </div>
+  <button type="submit">Sort</button>
+</form>
+
+<p>Disclaimer: All of the exercise descriptions on this page originate from the Daily Strength iPhone app.</p>
+    
+{% endblock %}
