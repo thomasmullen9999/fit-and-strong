@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Food List
+{% endblock %}
+
+{% block main %}
+
+  <h1>Food List</h1>
+
+  <table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Protein/100g</th>
+            <th>Carbs/100g</th>
+            <th>Fat/100g</th>
+            <th>Calories/100g</th>
+        </tr>
+    </thead>
+    <!-- Loop through the exercises to display each one in the table -->
+    <tbody>
+        {% for food in foods %}
+        <tr>
+            <td>{{ food.name }}</td>
+            <td>{{ food.protein_per_hundred_grams }}</td>
+            <td>{{ food.carbs_per_hundred_grams }}</td>
+            <td>{{ food.fat_per_hundred_grams }}</td>
+            <td>{{ food.calories_per_hundred_grams }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>    
+</table>
+
+<form action="/foodlist" method="post">
+  <div>
+      <input autocomplete="off" autofocus name="food-name" placeholder="Name" type="text">
+      <input autocomplete="off" name="food-protein" placeholder="Protein/100g" type="text">
+      <input autocomplete="off" name="food-carbs" placeholder="Carbs/100g" type="text">
+      <input autocomplete="off" name="food-fat" placeholder="Fat/100g" type="text">
+      <input autocomplete="off" name="food-calories" placeholder="Calories/100g" type="text">
+  </div>
+  <button type="submit" class="btn btn-primary">Add New Food</button>
+</form>
+
+<h3>Filter</h3>
+
+<form action="/exerciselist" method="post">
+  <div>
+      <select name="muscle">
+          <option disabled selected value="">Muscle</option>
+              <option value="biceps">Biceps</option>
+              <option value="biceps">Triceps</option>
+      </select>
+  </div>
+  <button type="submit" class="btn btn-primary">Sort</button>
+</form>
+
+{% endblock %}

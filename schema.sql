@@ -67,3 +67,8 @@ INSERT INTO "exercises" ("name", "description", "muscles_used")
 VALUES
 ("Barbell Bench Press", "Lie on a flat bench with your feet flat on the floor. Grasp the bar a little wider than shoulder width apart. Start by raising the barbell above your body and move it over the middle of your chest. Lower the bar down so it touches your chest. Raise the bar till your arms are fully extended and your elbows are locked.", "Chest, Shoulders, Triceps"),
 ("Dumbbell Hammer Curls", "Stand with your feet shoulder width apart, your knees slightly bent and your abs drawn in. Grasp a dumbbell in each hand so your palms are facing each other. Extend your arms so they are at the sides of your body. Keeping your elbows locked lift your arms in an arc towards your shoulders. Lower your arms in a steady controlled motion and repeat.", "Biceps");
+
+-- Populate the exercises table with a default list of foods
+INSERT INTO "foods" ("name", "protein_per_hundred_grams", "carbs_per_hundred_grams", "fat_per_hundred_grams", "calories_per_hundred_grams")
+VALUES
+("John West Tuna", 30, 200, 15, 254);
