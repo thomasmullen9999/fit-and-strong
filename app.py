@@ -3,6 +3,8 @@ from datetime import date
 
 from flask import Flask, redirect, render_template, request, session
 from flask_session import Session
+from functools import wraps
+from werkzeug.security import check_password_hash, generate_password_hash
 
 app = Flask(__name__)
 
@@ -12,15 +14,63 @@ Session(app)
 
 db = SQL("sqlite:///fitness.db")
 
+def error(message, code=400):
+    """Render message as an apology to user."""
+
+    def escape(s):
+        """
+        Escape special characters.
+
+        https://github.com/jacebrowning/memegen#special-characters
+        """
+        for old, new in [
+            ("-", "--"),
+            (" ", "-"),
+            ("_", "__"),
+            ("?", "~q"),
+            ("%", "~p"),
+            ("#", "~h"),
+            ("/", "~s"),
+            ('"', "''"),
+        ]:
+            s = s.replace(old, new)
+        return s
+
+    return render_template("apology.html", top=code, bottom=escape(message)), code
+
+
+def login_required(f):
+    """
+    Decorate routes to require login.
+
+    https://flask.palletsprojects.com/en/latest/patterns/viewdecorators/
+    """
+
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if session.get("user_id") is None:
+            return redirect("/login")
+        return f(*args, **kwargs)
+
+    return decorated_function
+
 @app.route("/")
+@login_required
 def index():
     return render_template("index.html")
 
 @app.route("/exercise")
+@login_required
 def exercise():
     return render_template("exercise.html")
 
+@app.route("/tips")
+@login_required
+def tips():
+    return render_template("tips.html")
+
 @app.route("/exerciselist", methods=["GET", "POST"])
+@login_required
 def exerciselist():
     if request.method == "POST":
       name = request.form.get("exercise-name")
@@ -39,6 +89,7 @@ def exerciselist():
     
 
 @app.route("/foodlist", methods=["GET", "POST"])
+@login_required
 def foodlist():
     if request.method == "POST":
       name = request.form.get("food-name")
@@ -58,25 +109,65 @@ def foodlist():
       return render_template("foodlist.html", foods=foods)
 
 @app.route("/workoutlog", methods=["GET", "POST"])
+@login_required
 def workoutlog():
+  print(request.method)
   if request.method == "POST":
+    username = db.execute(
+        """SELECT username FROM users
+        WHERE id = ?;""",
+        session["user_id"]
+    )
     db.execute(
       """INSERT INTO "workouts" ("date", "user_id")
-      VALUES (?, ?)""",
-      date.today(), "placeholder"
+      VALUES (?, ?);""",
+      date.today(), username[0]["username"]
     )
     return redirect("/workoutlog")
   else:
     workouts = db.execute("SELECT * FROM workouts;")
-    return render_template("workoutlog.html", workouts=workouts)
+    exercise_instances = db.execute("SELECT * FROM exercise_instances;")
+    return render_template("workoutlog.html", workouts=workouts, exercise_instances = exercise_instances)
 
-@app.route("/foodlog")
-def foodlog():
-    return render_template("foodlog.html")
+@app.route("/fooddiary", methods=["GET", "POST"])
+@login_required
+def fooddiary():
+  if request.method == "POST":
+    username = db.execute(
+        """SELECT username FROM users
+        WHERE id = ?;""",
+        session["user_id"]
+    )
+    db.execute(
+      """INSERT INTO "food_logs" ("date", "user_id")
+      VALUES (?, ?)""",
+      date.today(), username[0]["username"]
+    )
+    return redirect("/fooddiary")
+  else:
+    foodlogs = db.execute("SELECT * FROM food_logs;")
+    return render_template("fooddiary.html", foodlogs=foodlogs)
 
-@app.route("/mystats")
+@app.route("/mystats", methods=["GET", "POST"])
+@login_required
 def mystats():
-    return render_template("mystats.html")
+  if request.method == "POST":
+    weight = request.form.get("weight")
+    steps = request.form.get("steps")
+    username = db.execute(
+        """SELECT username FROM users
+        WHERE id = ?;""",
+        session["user_id"]
+    )
+    db.execute(
+      """INSERT INTO "stats" ("weight_kg", "steps", "date")
+      VALUES (?, ?, ?)""",
+      weight, steps, date.today()
+    )
+    return redirect("/mystats")
+  else:
+    stats = db.execute("SELECT * FROM stats;")
+    return render_template("mystats.html", stats=stats)
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -88,17 +179,15 @@ def register():
         password = request.form.get("password")
         confirmation = request.form.get("confirmation")
         if not username or not password or not confirmation:
-            return apology("all fields must be filled in", 400)
+            return error("all fields must be filled in", 400)
         # check if username already exists
         rows = db.execute("SELECT * FROM users WHERE username = ?;", username)
         if len(rows) != 0:
-            return apology("username already exists", 400)
+            return error("username already exists", 400)
 
         # check that password and confirmation match
-        print(password)
-        print(confirmation)
         if password != confirmation:
-            return apology("passwords must match", 400)
+            return error("passwords must match", 400)
 
         db.execute("INSERT INTO users (username, hash) VALUES (?, ?);",
                    username, generate_password_hash(password))
@@ -119,11 +208,11 @@ def login():
     if request.method == "POST":
         # Ensure username was submitted
         if not request.form.get("username"):
-            return apology("must provide username", 403)
+            return error("must provide username", 403)
 
         # Ensure password was submitted
         elif not request.form.get("password"):
-            return apology("must provide password", 403)
+            return error("must provide password", 403)
 
         # Query database for username
         rows = db.execute(
@@ -134,7 +223,7 @@ def login():
         if len(rows) != 1 or not check_password_hash(
             rows[0]["hash"], request.form.get("password")
         ):
-            return apology("invalid username and/or password", 403)
+            return error("invalid username and/or password", 403)
 
         # Remember which user has logged in
         session["user_id"] = rows[0]["id"]
@@ -152,3 +241,28 @@ def logout():
     session.clear()
     # Return user to login page
     return redirect("/")
+
+@app.route('/deleteworkout/<int:id>', methods=['POST'])
+@login_required
+def delete_workout(id):
+    db.execute(
+      """DELETE FROM "workouts"
+      WHERE id = ?;""",
+      id
+    )
+    return redirect("/workoutlog")
+
+@app.route('/addexercise/<int:workout_id>', methods=['POST'])
+@login_required
+def add_exercise(workout_id):
+    weight = request.form.get("weight")
+    sets = request.form.get("sets")
+    reps = request.form.get("reps")
+    name = request.form.get("exercise-name")
+    db.execute(
+      """INSERT INTO "exercise_instances" ("workout_id", "exercise_name", "weight_kg", "sets", "reps")
+      VALUES (?, ?, ?, ?, ?);""",
+        workout_id, name, weight, sets, reps
+    )
+    return redirect("/workoutlog")
+

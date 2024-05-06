@@ -6,15 +6,14 @@
 
 {% block main %}
 
-  <h1>Exercise</h1>
+  <h1>Exercise List</h1>
 
-  <form action="/exerciselist" method="post">
-    <div>
-        <input autocomplete="off" autofocus name="symbol" placeholder="Stock symbol" type="text">
-    </div>
-    <button class="btn btn-primary" type="submit">Get Quote</button>
+  <form action="/exerciselist" method="get">
   </form>
 
   <h2>Workout Log</h2>
+
+  <form action="/workoutlog" method="get">
+  </form>
     
 {% endblock %}

@@ -24,9 +24,12 @@
                 <div class="collapse navbar-collapse" id="navbar">
                     {% if session["user_id"] %}
                         <ul class="navbar-nav me-auto mt-2">
-                            <li class="nav-item"><a class="nav-link" href="/quote">Exercise</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/buy">Food</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/sell">My Stats</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/exerciselist">Exercise List</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/workoutlog">Workout Log</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/foodlist">Food List</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/fooddiary">Food Diary</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/mystats">My Stats</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/tips">Tips</a></li>
                         </ul>
                         <ul class="navbar-nav ms-auto mt-2">
                             <li class="nav-item"><a class="nav-link" href="/logout">Log Out</a></li>
@@ -50,7 +53,7 @@
       </main>
 
       <footer class="mb-5">
-        <p>Disclaimer: I do not own any of the content used. All of the exercise descriptions on this site originate from the Daily Strength iPhone app.</p>
+        <p>Disclaimer: I do not own any of the content used here. All of the exercise descriptions on this site originate from the Daily Strength iPhone app.</p>
       </footer>
 
     </body>

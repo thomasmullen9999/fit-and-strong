@@ -12,8 +12,10 @@
 
   <h1>Sleep</h1>
 
-  <form action="/exerciselist" method="post">
-    <button type="submit">New Workout</button>
+  <form action="/mystats" method="post">
+    <input autocomplete="off" autofocus name="weight" placeholder="Weight (kg)" type="text">
+    <input autocomplete="off" name="steps" placeholder="Steps" type="number">
+    <button type="submit">Add Today's Stats</button>
   </form>
     
 {% endblock %}

@@ -1,5 +1,13 @@
 -- Create tables
 
+-- Represent a list of users
+CREATE TABLE "users" (
+  "id" INTEGER, 
+  "username" TEXT NOT NULL, 
+  "hash" TEXT NOT NULL,
+  PRIMARY KEY("id")
+);
+
 -- Represent a list of exercises
 CREATE TABLE "exercises" (
   "id" INTEGER,
@@ -12,6 +20,14 @@ CREATE TABLE "exercises" (
 -- Represent a list of users' workouts
 CREATE TABLE "workouts" (
   "id" INTEGER,
+  "date" TEXT NOT NULL UNIQUE,
+  "user_id" TEXT NOT NULL,
+  PRIMARY KEY("id")
+);
+
+-- Represent a list of users' daily food intakes
+CREATE TABLE "food_logs" (
+  "id" INTEGER,
   "date" TEXT NOT NULL,
   "user_id" TEXT NOT NULL,
   PRIMARY KEY("id")
@@ -20,8 +36,9 @@ CREATE TABLE "workouts" (
 -- Represent a list of exercise instances, each with a workout id
 CREATE TABLE "exercise_instances" (
   "id" INTEGER,
-  "workout_id" TEXT NOT NULL,
+  "workout_id" INTEGER,
   "exercise_name" TEXT NOT NULL,
+  "weight_kg" INTEGER,
   "sets" INTEGER,
   "reps" INTEGER,
   PRIMARY KEY("id"),
@@ -56,6 +73,7 @@ CREATE TABLE "foods" (
 -- Represents a list of users' stats for each date
 CREATE TABLE "stats" (
   "id" INTEGER,
+  "user_id" INTEGER,
   "date" TEXT NOT NULL,
   "weight_kg" REAL,
   "steps" INTEGER,

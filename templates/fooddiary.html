@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Food Diary
+{% endblock %}
+
+{% block main %}
+
+  <h1>Food Diary</h1>
+
+  <form action="/fooddiary" method="post">
+    <button type="submit">New Food Day</button>
+  </form>
+
+  {% for foodlog in foodlogs %}
+  <h4>{{ foodlog.date }}</h4>
+  <button>Delete Food Log</button>
+  <br>
+
+  <form action="/fooddiary" method="post">
+    <input autocomplete="off" autofocus name="food-name" placeholder="Name" type="text">
+    <input autocomplete="off" name="grams" placeholder="Amount(g)" type="number">
+    <button type="submit">Add Food</button>
+  </form>
+  {% endfor %}
+    
+{% endblock %}
