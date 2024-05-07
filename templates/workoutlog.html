@@ -17,15 +17,17 @@
 
       {% for instance in exercise_instances %}
         {% if instance.workout_id == workout.id %}
-        <h4>{{ instance.exercise_name }}</h4>
-        <h4>{{ instance.weight_kg }}kg</h4>
-        <h4>{{ instance.sets }}</h4>
-        <h4>{{ instance.reps }}</h4>
+        <h4>{{ instance.exercise_name }} ({{ instance.weight_kg }}kg) - {{ instance.sets }} x {{ instance.reps }}</h4>
         {% endif %}
       {% endfor %}
 
     <form action="/addexercise/{{ workout.id }}" method="post">
-      <input autocomplete="off" autofocus name="exercise-name" placeholder="Name" type="text">
+      <select name="exercise-name">
+        <option disabled selected value="">Exercise</option>
+          {% for exercise in exercises %}
+          <option value="{{ exercise.name }}">{{ exercise.name }}</option>
+          {% endfor %}
+        </select>
       <input autocomplete="off" name="weight" placeholder="Weight(kg)" type="number">
       <input autocomplete="off" name="sets" placeholder="Sets" type="number">
       <input autocomplete="off" name="reps" placeholder="Reps" type="number">

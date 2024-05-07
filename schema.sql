@@ -20,7 +20,7 @@ CREATE TABLE "exercises" (
 -- Represent a list of users' workouts
 CREATE TABLE "workouts" (
   "id" INTEGER,
-  "date" TEXT NOT NULL UNIQUE,
+  "date" TEXT NOT NULL,
   "user_id" TEXT NOT NULL,
   PRIMARY KEY("id")
 );

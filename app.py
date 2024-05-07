@@ -36,7 +36,7 @@ def error(message, code=400):
             s = s.replace(old, new)
         return s
 
-    return render_template("apology.html", top=code, bottom=escape(message)), code
+    return render_template("error.html", top=code, bottom=escape(message)), code
 
 
 def login_required(f):
@@ -118,16 +118,21 @@ def workoutlog():
         WHERE id = ?;""",
         session["user_id"]
     )
-    db.execute(
-      """INSERT INTO "workouts" ("date", "user_id")
-      VALUES (?, ?);""",
-      date.today(), username[0]["username"]
-    )
-    return redirect("/workoutlog")
+    
+    try:
+      db.execute(
+        """INSERT INTO "workouts" ("date", "user_id")
+        VALUES (?, ?);""",
+        date.today(), session["user_id"]
+      )
+      return redirect("/workoutlog")
+    except ValueError:
+       return error("only one workout can be entered per day", 400)
   else:
-    workouts = db.execute("SELECT * FROM workouts;")
+    exercises = db.execute("SELECT * FROM exercises;")
+    workouts = db.execute("SELECT * FROM workouts WHERE user_id = ?;", session["user_id"])
     exercise_instances = db.execute("SELECT * FROM exercise_instances;")
-    return render_template("workoutlog.html", workouts=workouts, exercise_instances = exercise_instances)
+    return render_template("workoutlog.html", workouts=workouts, exercise_instances = exercise_instances, exercises=exercises)
 
 @app.route("/fooddiary", methods=["GET", "POST"])
 @login_required
@@ -259,6 +264,8 @@ def add_exercise(workout_id):
     sets = request.form.get("sets")
     reps = request.form.get("reps")
     name = request.form.get("exercise-name")
+    if not weight or not name or not sets or not reps:
+       return error("all form fields must be entered", 400)
     db.execute(
       """INSERT INTO "exercise_instances" ("workout_id", "exercise_name", "weight_kg", "sets", "reps")
       VALUES (?, ?, ?, ?, ?);""",
@@ -266,3 +273,23 @@ def add_exercise(workout_id):
     )
     return redirect("/workoutlog")
 
+@app.route('/deleteexercise/<int:id>', methods=['POST'])
+@login_required
+def delete_exercise(id):
+    db.execute(
+      """DELETE FROM "exercises"
+      WHERE id = ?;""",
+      id
+    )
+    return redirect("/exerciselist")
+
+@app.route('/filteredexerciselist', methods=['GET'])
+@login_required
+def filter_exercise_list():
+    musclefilter = request.args.get("musclefilter")
+    filteredExercises = db.execute(
+      """SELECT * FROM "exercises" WHERE muscles_used LIKE ?;
+      """, musclefilter
+    )
+    print(filteredExercises)
+    return render_template("exerciselist.html", exercises=filteredExercises)

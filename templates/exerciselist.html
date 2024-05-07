@@ -23,6 +23,11 @@
             <td>{{ exercise.name }}</td>
             <td>{{ exercise.description }}</td>
             <td>{{ exercise.muscles_used }}</td>
+            <td>
+                <form action="/deleteexercise/{{ exercise.id }}" method="post">
+                <input class="btn" type="submit" name="delete" value="Delete">
+                </form>
+            </td>
         </tr>
         {% endfor %}
     </tbody>    
@@ -39,12 +44,12 @@
 
 <h3>Filter</h3>
 
-<form action="/exerciselist" method="post">
+<form action="/filteredexerciselist" method="get">
   <div>
-      <select name="muscle">
+      <select name="musclefilter">
           <option disabled selected value="">Muscle</option>
               <option value="biceps">Biceps</option>
-              <option value="biceps">Triceps</option>
+              <option value="triceps">Triceps</option>
       </select>
   </div>
   <button type="submit" class="btn btn-primary">Sort</button>
