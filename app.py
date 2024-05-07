@@ -123,7 +123,7 @@ def workoutlog():
       db.execute(
         """INSERT INTO "workouts" ("date", "user_id")
         VALUES (?, ?);""",
-        date.today(), session["user_id"]
+        date.today().strftime("%d/%m/%Y"), session["user_id"]
       )
       return redirect("/workoutlog")
     except ValueError:
@@ -287,9 +287,12 @@ def delete_exercise(id):
 @login_required
 def filter_exercise_list():
     musclefilter = request.args.get("musclefilter")
+    print(musclefilter)
+    all = db.execute("""SELECT * FROM "exercises";""")
     filteredExercises = db.execute(
-      """SELECT * FROM "exercises" WHERE muscles_used LIKE ?;
-      """, musclefilter
+      """SELECT * FROM "exercises" WHERE "muscles_used" LIKE ?;
+      """, "%" + musclefilter + "%"
     )
+    print(all)
     print(filteredExercises)
     return render_template("exerciselist.html", exercises=filteredExercises)

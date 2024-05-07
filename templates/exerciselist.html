@@ -42,17 +42,22 @@
   <button type="submit" class="btn btn-primary">Add New Exercise</button>
 </form>
 
-<h3>Filter</h3>
-
 <form action="/filteredexerciselist" method="get">
   <div>
       <select name="musclefilter">
           <option disabled selected value="">Muscle</option>
-              <option value="biceps">Biceps</option>
-              <option value="triceps">Triceps</option>
+            <option value="biceps">Biceps</option>
+            <option value="triceps">Triceps</option>
+            <option value="chest">Chest</option>
+            <option value="shoulders">Shoulders</option>
+            <option value="lats">Lats</option>
+            <option value="abs">Abs</option>
+            <option value="quads">Quads</option>
+            <option value="hamstrings">Hamstrings</option>
+            <option value="calves">Calves</option>
       </select>
   </div>
-  <button type="submit" class="btn btn-primary">Sort</button>
+  <button type="submit" class="btn btn-primary">Filter</button>
 </form>
 
 {% endblock %}

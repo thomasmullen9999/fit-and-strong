@@ -42,7 +42,7 @@ CREATE TABLE "exercise_instances" (
   "sets" INTEGER,
   "reps" INTEGER,
   PRIMARY KEY("id"),
-  FOREIGN KEY("workout_id") REFERENCES "workouts"("id")
+  FOREIGN KEY("workout_id") REFERENCES "workouts"("id") ON DELETE CASCADE
 );
 
 -- Represent users' food instances

@@ -45,3 +45,6 @@ button, input[type="submit"] {
     vertical-align: middle;
 }
 
+form {
+    margin-bottom: 30px;
+}

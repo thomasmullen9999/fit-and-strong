@@ -13,7 +13,7 @@
   </form>
 
     {% for workout in workouts %}
-    <h3>{{ workout.date }} - {{ workout.user_id }}</h3>
+    <h3>{{ workout.date }}</h3>
 
       {% for instance in exercise_instances %}
         {% if instance.workout_id == workout.id %}
