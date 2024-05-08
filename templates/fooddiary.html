@@ -9,19 +9,34 @@
   <h1>Food Diary</h1>
 
   <form action="/fooddiary" method="post">
-    <button type="submit">New Food Day</button>
+    <button type="submit">New Food Log</button>
   </form>
 
-  {% for foodlog in foodlogs %}
-  <h4>{{ foodlog.date }}</h4>
-  <button>Delete Food Log</button>
-  <br>
+    {% for foodlog in foodlogs %}
+    <h3>{{ foodlog.date }}</h3>
 
-  <form action="/fooddiary" method="post">
-    <input autocomplete="off" autofocus name="food-name" placeholder="Name" type="text">
-    <input autocomplete="off" name="grams" placeholder="Amount(g)" type="number">
-    <button type="submit">Add Food</button>
-  </form>
-  {% endfor %}
+      {% for instance in foodinstances %}
+        {% if instance.food_log_id == foodlog.id %}
+        <h4>{{ instance.food_name }} ({{ instance.amount_grams }}g) Protein: {{ instance.protein_grams }}g Carbs: {{ instance.carbs_grams }}g Fat: {{ instance.fat_grams }}g {{ instance.calories }}kcal</h4>
+        {% endif %}
+      {% endfor %}
+
+    <form action="/addfood/{{ foodlog.id }}" method="post">
+      <select name="food-name">
+        <option disabled selected value="">Food</option>
+          {% for food in foods %}
+          <option value="{{ food.name }}">{{ food.name }}</option>
+          {% endfor %}
+        </select>
+      <input autocomplete="off" name="amount" placeholder="Amount(g)" type="number">
+      <input class="btn" type="submit" name="add" value="Add Food">
+    </form>
+
+    <form action="/deletefoodlog/{{ foodlog.id }}" method="post">
+      <input class="btn" type="submit" name="delete" value="Delete">
+    </form>
+    <br><br><br>
+
+    {% endfor %}
     
 {% endblock %}

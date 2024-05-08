@@ -111,7 +111,6 @@ def foodlist():
 @app.route("/workoutlog", methods=["GET", "POST"])
 @login_required
 def workoutlog():
-  print(request.method)
   if request.method == "POST":
     username = db.execute(
         """SELECT username FROM users
@@ -138,20 +137,17 @@ def workoutlog():
 @login_required
 def fooddiary():
   if request.method == "POST":
-    username = db.execute(
-        """SELECT username FROM users
-        WHERE id = ?;""",
-        session["user_id"]
-    )
     db.execute(
       """INSERT INTO "food_logs" ("date", "user_id")
       VALUES (?, ?)""",
-      date.today(), username[0]["username"]
+      date.today(), session["user_id"]
     )
     return redirect("/fooddiary")
   else:
+    foods = db.execute("SELECT * FROM foods;")
     foodlogs = db.execute("SELECT * FROM food_logs;")
-    return render_template("fooddiary.html", foodlogs=foodlogs)
+    foodinstances = db.execute("SELECT * FROM food_instances;")
+    return render_template("fooddiary.html", foodlogs=foodlogs, foods=foods, foodinstances=foodinstances)
 
 @app.route("/mystats", methods=["GET", "POST"])
 @login_required
@@ -287,12 +283,42 @@ def delete_exercise(id):
 @login_required
 def filter_exercise_list():
     musclefilter = request.args.get("musclefilter")
-    print(musclefilter)
     all = db.execute("""SELECT * FROM "exercises";""")
     filteredExercises = db.execute(
       """SELECT * FROM "exercises" WHERE "muscles_used" LIKE ?;
       """, "%" + musclefilter + "%"
     )
-    print(all)
-    print(filteredExercises)
     return render_template("exerciselist.html", exercises=filteredExercises)
+
+@app.route('/addfood/<int:foodlog_id>', methods=['POST'])
+@login_required
+def add_food(foodlog_id):
+    name = request.form.get("food-name")
+    amount = int(request.form.get("amount"))
+    # get nutritional info about this food
+    foodinfo = db.execute("""
+    SELECT * FROM "foods" WHERE "name" = ?;
+    """, name)
+    protein = int(foodinfo[0]['protein_per_hundred_grams'] * (amount/100))
+    carbs = int(foodinfo[0]["carbs_per_hundred_grams"] * (amount/100))
+    fat = int(foodinfo[0]["fat_per_hundred_grams"] * (amount/100))
+    calories = int(foodinfo[0]["calories_per_hundred_grams"] * (amount/100))
+
+    if not name or not amount:
+       return error("all form fields must be entered", 400)
+    db.execute(
+      """INSERT INTO "food_instances" ("food_log_id", "food_name", "amount_grams", "protein_grams", "carbs_grams", "fat_grams", "calories")
+      VALUES (?, ?, ?, ?, ?, ?, ?);""",
+        foodlog_id, name, amount, protein, carbs, fat, calories
+    )
+    return redirect("/fooddiary")
+
+@app.route('/deletefoodlog/<int:id>', methods=['POST'])
+@login_required
+def delete_foodlog(id):
+    db.execute(
+      """DELETE FROM "food_logs"
+      WHERE id = ?;""",
+      id
+    )
+    return redirect("/fooddiary")

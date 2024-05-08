@@ -49,6 +49,7 @@ CREATE TABLE "exercise_instances" (
 CREATE TABLE "food_instances" (
   "id" INTEGER,
   "food_id" INTEGER,
+  "food_log_id" INTEGER,
   "food_name" TEXT NOT NULL,
   "amount_grams" INTEGER,
   "protein_grams" INTEGER,
@@ -56,7 +57,8 @@ CREATE TABLE "food_instances" (
   "fat_grams" INTEGER,
   "calories" INTEGER,
   PRIMARY KEY("id"),
-  FOREIGN KEY("food_id") REFERENCES "foods"("id")
+  FOREIGN KEY("food_id") REFERENCES "foods"("id") ON DELETE CASCADE,
+  FOREIGN KEY("food_log_id") REFERENCES "food_logs"("id") ON DELETE CASCADE
 );
 
 -- Represent a list of foods
@@ -77,6 +79,7 @@ CREATE TABLE "stats" (
   "date" TEXT NOT NULL,
   "weight_kg" REAL,
   "steps" INTEGER,
+  "sleep_hours" REAL,
   PRIMARY KEY("id")
 );
 
