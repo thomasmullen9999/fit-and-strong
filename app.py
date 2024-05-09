@@ -145,7 +145,7 @@ def fooddiary():
     return redirect("/fooddiary")
   else:
     foods = db.execute("SELECT * FROM foods;")
-    foodlogs = db.execute("SELECT * FROM food_logs;")
+    foodlogs = db.execute("SELECT * FROM food_logs WHERE user_id = ?;", session["user_id"])
     foodinstances = db.execute("SELECT * FROM food_instances;")
     return render_template("fooddiary.html", foodlogs=foodlogs, foods=foods, foodinstances=foodinstances)
 
@@ -155,11 +155,6 @@ def mystats():
   if request.method == "POST":
     weight = request.form.get("weight")
     steps = request.form.get("steps")
-    username = db.execute(
-        """SELECT username FROM users
-        WHERE id = ?;""",
-        session["user_id"]
-    )
     db.execute(
       """INSERT INTO "stats" ("weight_kg", "steps", "date")
       VALUES (?, ?, ?)""",

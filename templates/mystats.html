@@ -6,17 +6,15 @@
 
 {% block main %}
 
-  <h1>Weight</h1>
-
-  <h1>Steps</h1>
-
-  <h1>Sleep</h1>
-
   <form action="/mystats" method="post">
     <input autocomplete="off" autofocus name="weight" placeholder="Weight (kg)" type="text">
     <input autocomplete="off" name="steps" placeholder="Steps" type="number">
     <input autocomplete="off" name="sleep" placeholder="Hours of sleep" type="number">
     <button type="submit">Add Today's Stats</button>
   </form>
+
+  {% for stat in stats %}
+  <h4>{{ stat.date }} - Weight: {{ stat.weight_kg }}kg, Steps: {{ stat.steps }}, Sleep: {{ stat.sleep_hours }} hours</h4>
+  {% endfor %}
     
 {% endblock %}

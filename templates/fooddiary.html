@@ -15,11 +15,18 @@
     {% for foodlog in foodlogs %}
     <h3>{{ foodlog.date }}</h3>
 
+      {% set ns = namespace(totalcalories = 0, totalprotein = 0, totalcarbs = 0, totalfat = 0) %}
       {% for instance in foodinstances %}
         {% if instance.food_log_id == foodlog.id %}
         <h4>{{ instance.food_name }} ({{ instance.amount_grams }}g) Protein: {{ instance.protein_grams }}g Carbs: {{ instance.carbs_grams }}g Fat: {{ instance.fat_grams }}g {{ instance.calories }}kcal</h4>
+        {% set ns.totalcalories = ns.totalcalories + instance.calories %}
+        {% set ns.totalprotein = ns.totalprotein + instance.protein_grams %}
+        {% set ns.totalcarbs = ns.totalcarbs + instance.carbs_grams %}
+        {% set ns.totalfat = ns.totalfat + instance.fat_grams %}
         {% endif %}
       {% endfor %}
+
+      <h4>Total: {{ ns.totalprotein }}g protein, {{ ns.totalcarbs }}g carbs, {{ ns.totalfat }}g fat, {{ ns.totalcalories }}kcal</h4>
 
     <form action="/addfood/{{ foodlog.id }}" method="post">
       <select name="food-name">
