@@ -59,10 +59,10 @@ def login_required(f):
 def index():
     return render_template("index.html")
 
-@app.route("/exercise")
+@app.route("/contact")
 @login_required
-def exercise():
-    return render_template("exercise.html")
+def contact():
+    return render_template("contact.html")
 
 @app.route("/tips")
 @login_required
