@@ -17,7 +17,7 @@
 
       {% for instance in exercise_instances %}
         {% if instance.workout_id == workout.id %}
-        <h4>{{ instance.exercise_name }} ({{ instance.weight_kg }}kg) - {{ instance.sets }} x {{ instance.reps }}</h4>
+        <h4>{{ instance.exercise_name }} ({{ instance.weight_kg }}kg) - {{ instance.sets }} x {{ instance.reps }} </h4>
         {% endif %}
       {% endfor %}
 
@@ -31,11 +31,11 @@
       <input autocomplete="off" name="weight" placeholder="Weight(kg)" type="number">
       <input autocomplete="off" name="sets" placeholder="Sets" type="number">
       <input autocomplete="off" name="reps" placeholder="Reps" type="number">
-      <input class="btn" type="submit" name="add" value="Add Exercise">
+      <input class="btn" type="submit" name="add" value="Add">
     </form>
 
     <form action="/deleteworkout/{{ workout.id }}" method="post">
-      <input class="btn" type="submit" name="delete" value="Delete">
+      <input class="btn" type="submit" name="delete" value="Delete Workout">
     </form>
     <br><br><br>
 

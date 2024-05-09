@@ -140,7 +140,7 @@ def fooddiary():
     db.execute(
       """INSERT INTO "food_logs" ("date", "user_id")
       VALUES (?, ?)""",
-      date.today(), session["user_id"]
+      date.today().strftime("%d/%m/%Y"), session["user_id"]
     )
     return redirect("/fooddiary")
   else:
@@ -155,14 +155,16 @@ def mystats():
   if request.method == "POST":
     weight = request.form.get("weight")
     steps = request.form.get("steps")
+    sleep = request.form.get("sleep")
     db.execute(
-      """INSERT INTO "stats" ("weight_kg", "steps", "date")
-      VALUES (?, ?, ?)""",
-      weight, steps, date.today()
+      """INSERT INTO "stats" ("weight_kg", "steps", "sleep_hours", "date")
+      VALUES (?, ?, ?, ?)""",
+      weight, steps, sleep, date.today().strftime("%d/%m/%Y")
     )
     return redirect("/mystats")
   else:
     stats = db.execute("SELECT * FROM stats;")
+    print(stats)
     return render_template("mystats.html", stats=stats)
 
 @app.route("/register", methods=["GET", "POST"])
@@ -317,3 +319,13 @@ def delete_foodlog(id):
       id
     )
     return redirect("/fooddiary")
+
+@app.route('/deletestat/<int:id>', methods=['POST'])
+@login_required
+def delete_stat(id):
+    db.execute(
+      """DELETE FROM "stats"
+      WHERE id = ?;""",
+      id
+    )
+    return redirect("/mystats")
