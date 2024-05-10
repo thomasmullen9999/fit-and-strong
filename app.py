@@ -129,7 +129,7 @@ def workoutlog():
        return error("only one workout can be entered per day", 400)
   else:
     exercises = db.execute("SELECT * FROM exercises;")
-    workouts = db.execute("SELECT * FROM workouts WHERE user_id = ?;", session["user_id"])
+    workouts = db.execute("SELECT * FROM workouts WHERE user_id = ? ORDER BY date DESC;", session["user_id"])
     exercise_instances = db.execute("SELECT * FROM exercise_instances;")
     return render_template("workoutlog.html", workouts=workouts, exercise_instances = exercise_instances, exercises=exercises)
 
@@ -145,7 +145,7 @@ def fooddiary():
     return redirect("/fooddiary")
   else:
     foods = db.execute("SELECT * FROM foods;")
-    foodlogs = db.execute("SELECT * FROM food_logs WHERE user_id = ?;", session["user_id"])
+    foodlogs = db.execute("SELECT * FROM food_logs WHERE user_id = ? ORDER BY date DESC;", session["user_id"])
     foodinstances = db.execute("SELECT * FROM food_instances;")
     return render_template("fooddiary.html", foodlogs=foodlogs, foods=foods, foodinstances=foodinstances)
 
@@ -163,7 +163,7 @@ def mystats():
     )
     return redirect("/mystats")
   else:
-    stats = db.execute("SELECT * FROM stats;")
+    stats = db.execute("SELECT * FROM stats ORDER BY date DESC;")
     print(stats)
     return render_template("mystats.html", stats=stats)
 

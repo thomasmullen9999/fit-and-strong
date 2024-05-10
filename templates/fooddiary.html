@@ -9,11 +9,21 @@
   <h1>Food Diary</h1>
 
   <form action="/fooddiary" method="post">
-    <button type="submit">New Food Log</button>
+    <button type="submit">New Entry</button>
   </form>
 
     {% for foodlog in foodlogs %}
-    <h3>{{ foodlog.date }}</h3>
+      <h3>{{ foodlog.date }}</h3>
+      <form action="/addfood/{{ foodlog.id }}" method="post">
+        <select name="food-name">
+          <option disabled selected value="">Food</option>
+            {% for food in foods %}
+            <option value="{{ food.name }}">{{ food.name }}</option>
+            {% endfor %}
+          </select>
+        <input autocomplete="off" name="amount" placeholder="Amount(g)" type="number">
+        <input class="btn" type="submit" name="add" value="Add Food">
+      </form>
 
       {% set ns = namespace(totalcalories = 0, totalprotein = 0, totalcarbs = 0, totalfat = 0) %}
       <table>
@@ -51,19 +61,10 @@
       
       <h4>Total: {{ ns.totalprotein }}g protein, {{ ns.totalcarbs }}g carbs, {{ ns.totalfat }}g fat, {{ ns.totalcalories }}kcal</h4>
 
-    <form action="/addfood/{{ foodlog.id }}" method="post">
-      <select name="food-name">
-        <option disabled selected value="">Food</option>
-          {% for food in foods %}
-          <option value="{{ food.name }}">{{ food.name }}</option>
-          {% endfor %}
-        </select>
-      <input autocomplete="off" name="amount" placeholder="Amount(g)" type="number">
-      <input class="btn" type="submit" name="add" value="Add Food">
-    </form>
+    
 
     <form action="/deletefoodlog/{{ foodlog.id }}" method="post">
-      <input class="btn" type="submit" name="delete" value="Delete">
+      <input class="btn" type="submit" name="delete" value="Delete Entry">
     </form>
     <br><br><br>
 
