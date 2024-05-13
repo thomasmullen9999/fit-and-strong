@@ -18,6 +18,9 @@
       {% for instance in exercise_instances %}
         {% if instance.workout_id == workout.id %}
         <h4>{{ instance.exercise_name }} ({{ instance.weight_kg }}kg) - {{ instance.sets }} x {{ instance.reps }} </h4>
+        <form action="/deleteexerciseinstance/{{ instance.id }}" method="post">
+          <input class="btn" type="submit" name="delete" value="X">
+        </form>
         {% endif %}
       {% endfor %}
 

@@ -47,6 +47,9 @@
             <td>{{ instance.carbs_grams }}</td>
             <td>{{ instance.fat_grams }}</td>
             <td>{{ instance.calories }}</td>
+            <form action="/deletefoodinstance/{{ instance.id }}" method="post">
+              <input class="btn" type="submit" name="delete" value="X">
+            </form>
           </tr>
           {% set ns.totalcalories = ns.totalcalories + instance.calories %}
           {% set ns.totalprotein = ns.totalprotein + instance.protein_grams %}

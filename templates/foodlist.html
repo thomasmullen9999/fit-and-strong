@@ -40,6 +40,11 @@
             <td>{{ food.carbs_per_hundred_grams }}</td>
             <td>{{ food.fat_per_hundred_grams }}</td>
             <td>{{ food.calories_per_hundred_grams }}</td>
+            <td>
+                <form action="/deletefood/{{ food.id }}" method="post">
+                <input class="btn" type="submit" name="delete" value="X">
+                </form>
+            </td>
         </tr>
         {% endfor %}
     </tbody>    

@@ -17,26 +17,8 @@ db = SQL("sqlite:///fitness.db")
 def error(message, code=400):
     """Render message as an apology to user."""
 
-    def escape(s):
-        """
-        Escape special characters.
 
-        https://github.com/jacebrowning/memegen#special-characters
-        """
-        for old, new in [
-            ("-", "--"),
-            (" ", "-"),
-            ("_", "__"),
-            ("?", "~q"),
-            ("%", "~p"),
-            ("#", "~h"),
-            ("/", "~s"),
-            ('"', "''"),
-        ]:
-            s = s.replace(old, new)
-        return s
-
-    return render_template("error.html", top=code, bottom=escape(message)), code
+    return render_template("error.html", top=code, bottom=message), code
 
 
 def login_required(f):
@@ -77,6 +59,9 @@ def exerciselist():
       desc = request.form.get("exercise-desc")
       muscles = request.form.get("exercise-muscles")
 
+      if not name or not muscles:
+        return error("name and muscles fields must be filled in", 400)
+
       db.execute(
         """INSERT INTO "exercises" ("name", "description", "muscles_used")
         VALUES (?, ?, ?)""",
@@ -97,6 +82,9 @@ def foodlist():
       carbs = request.form.get("food-carbs")
       fat = request.form.get("food-fat")
       calories = request.form.get("food-calories")
+
+      if not name or not protein or not carbs or not fat or not calories:
+        return error("all form fields must be filled in", 400)
 
       db.execute(
         """INSERT INTO "foods" ("name", "protein_per_hundred_grams", "carbs_per_hundred_grams", "fat_per_hundred_grams", "calories_per_hundred_grams")
@@ -156,6 +144,8 @@ def mystats():
     weight = request.form.get("weight")
     steps = request.form.get("steps")
     sleep = request.form.get("sleep")
+    if not weight and not sleep and not weight:
+      return error("at least one stat must be entered", 400)
     db.execute(
       """INSERT INTO "stats" ("weight_kg", "steps", "sleep_hours", "date")
       VALUES (?, ?, ?, ?)""",
@@ -276,6 +266,16 @@ def delete_exercise(id):
     )
     return redirect("/exerciselist")
 
+@app.route('/deletefood/<int:id>', methods=['POST'])
+@login_required
+def delete_food(id):
+    db.execute(
+      """DELETE FROM "foods"
+      WHERE id = ?;""",
+      id
+    )
+    return redirect("/foodlist")
+
 @app.route('/filteredexerciselist', methods=['GET'])
 @login_required
 def filter_exercise_list():
@@ -291,7 +291,11 @@ def filter_exercise_list():
 @login_required
 def add_food(foodlog_id):
     name = request.form.get("food-name")
-    amount = int(request.form.get("amount"))
+    amount = request.form.get("amount")
+    if not name or not amount:
+      return error("all form fields must be entered", 400)
+    amount = int(amount)
+
     # get nutritional info about this food
     foodinfo = db.execute("""
     SELECT * FROM "foods" WHERE "name" = ?;
@@ -301,8 +305,7 @@ def add_food(foodlog_id):
     fat = int(foodinfo[0]["fat_per_hundred_grams"] * (amount/100))
     calories = int(foodinfo[0]["calories_per_hundred_grams"] * (amount/100))
 
-    if not name or not amount:
-       return error("all form fields must be entered", 400)
+    
     db.execute(
       """INSERT INTO "food_instances" ("food_log_id", "food_name", "amount_grams", "protein_grams", "carbs_grams", "fat_grams", "calories")
       VALUES (?, ?, ?, ?, ?, ?, ?);""",
@@ -329,3 +332,23 @@ def delete_stat(id):
       id
     )
     return redirect("/mystats")
+
+@app.route('/deleteexerciseinstance/<int:id>', methods=['POST'])
+@login_required
+def delete_exercise_instance(id):
+    db.execute(
+      """DELETE FROM "exercise_instances"
+      WHERE id = ?;""",
+      id
+    )
+    return redirect("/workoutlog")
+
+@app.route('/deletefoodinstance/<int:id>', methods=['POST'])
+@login_required
+def delete_food_instance(id):
+    db.execute(
+      """DELETE FROM "food_instances"
+      WHERE id = ?;""",
+      id
+    )
+    return redirect("/fooddiary")
