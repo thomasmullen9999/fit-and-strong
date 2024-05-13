@@ -15,18 +15,9 @@ Session(app)
 db = SQL("sqlite:///fitness.db")
 
 def error(message, code=400):
-    """Render message as an apology to user."""
-
-
     return render_template("error.html", top=code, bottom=message), code
 
-
 def login_required(f):
-    """
-    Decorate routes to require login.
-
-    https://flask.palletsprojects.com/en/latest/patterns/viewdecorators/
-    """
 
     @wraps(f)
     def decorated_function(*args, **kwargs):

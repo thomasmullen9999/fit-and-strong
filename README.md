@@ -8,14 +8,13 @@ For my final project in CS50x, I decided to create a Flask application using Pyt
 which combines several features of already-existing software, such as the ability to track your diet (including your daily intake of calories and 
 macronutrients), the ability to record all of your workouts, and also the ability to keep track of your daily weight, steps taken and hours of sleep.
 
-I wanted users to be able to create an account and then log in and out. To achieve this, I used some of the helper functions provided by the CS50 staff
-in Problem Set 9, including the apology function (renamed to error) and the login_required function.
+I wanted users to be able to create an account and then log in and out, and for the page to render as an error message when certain criteria were not met. To achieve this, I borrowed some of the helper functions provided by the CS50 staff in Problem Set 9, including the apology function (renamed to error) and the login_required function.
 
 A database called fitness.db was created to store information about users, individual exercises, foods, workouts, stats and more. To keep a record of the 
 queries and create statements which are used to initialise and populate the tables in this database, I created schema.sql. This file contains all of the
 necessary code to get the database up and running before any users can interact with it.
 
-My website has the following sections: 
+My application contains the following sections: 
 
 ### Home
 

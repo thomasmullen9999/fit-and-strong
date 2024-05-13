@@ -97,3 +97,9 @@ select {
 #contact h2 {
     text-align: left;
 }
+
+.exercise-instance {
+    align-items: center;
+    display: inline-block;
+    width: 800px;
+}
