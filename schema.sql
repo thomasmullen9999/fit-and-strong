@@ -25,14 +25,6 @@ CREATE TABLE "workouts" (
   PRIMARY KEY("id")
 );
 
--- Represent a list of users' daily food intakes
-CREATE TABLE "food_logs" (
-  "id" INTEGER,
-  "date" TEXT NOT NULL,
-  "user_id" TEXT NOT NULL,
-  PRIMARY KEY("id")
-);
-
 -- Represent a list of exercise instances, each with a workout id
 CREATE TABLE "exercise_instances" (
   "id" INTEGER,
@@ -43,6 +35,25 @@ CREATE TABLE "exercise_instances" (
   "reps" INTEGER,
   PRIMARY KEY("id"),
   FOREIGN KEY("workout_id") REFERENCES "workouts"("id") ON DELETE CASCADE
+);
+
+-- Represent a list of foods
+CREATE TABLE "foods" (
+  "id" INTEGER,
+  "name" TEXT NOT NULL,
+  "protein_per_hundred_grams" INTEGER,
+  "carbs_per_hundred_grams" INTEGER,
+  "fat_per_hundred_grams" INTEGER,
+  "calories_per_hundred_grams" INTEGER,
+  PRIMARY KEY("id")
+);
+
+-- Represent a list of users' daily food intakes
+CREATE TABLE "food_logs" (
+  "id" INTEGER,
+  "date" TEXT NOT NULL,
+  "user_id" TEXT NOT NULL,
+  PRIMARY KEY("id")
 );
 
 -- Represent users' food instances
@@ -59,17 +70,6 @@ CREATE TABLE "food_instances" (
   PRIMARY KEY("id"),
   FOREIGN KEY("food_id") REFERENCES "foods"("id") ON DELETE CASCADE,
   FOREIGN KEY("food_log_id") REFERENCES "food_logs"("id") ON DELETE CASCADE
-);
-
--- Represent a list of foods
-CREATE TABLE "foods" (
-  "id" INTEGER,
-  "name" TEXT NOT NULL,
-  "protein_per_hundred_grams" INTEGER,
-  "carbs_per_hundred_grams" INTEGER,
-  "fat_per_hundred_grams" INTEGER,
-  "calories_per_hundred_grams" INTEGER,
-  PRIMARY KEY("id")
 );
 
 -- Represents a list of users' stats for each date

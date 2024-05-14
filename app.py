@@ -138,14 +138,13 @@ def mystats():
     if not weight and not sleep and not weight:
       return error("at least one stat must be entered", 400)
     db.execute(
-      """INSERT INTO "stats" ("weight_kg", "steps", "sleep_hours", "date")
-      VALUES (?, ?, ?, ?)""",
-      weight, steps, sleep, date.today().strftime("%d/%m/%Y")
+      """INSERT INTO "stats" ("weight_kg", "steps", "sleep_hours", "date", "user_id")
+      VALUES (?, ?, ?, ?, ?)""",
+      weight, steps, sleep, date.today().strftime("%d/%m/%Y"), session["user_id"]
     )
     return redirect("/mystats")
   else:
-    stats = db.execute("SELECT * FROM stats ORDER BY date DESC;")
-    print(stats)
+    stats = db.execute("SELECT * FROM stats WHERE user_id = ? ORDER BY date DESC;", session["user_id"])
     return render_template("mystats.html", stats=stats)
 
 @app.route("/register", methods=["GET", "POST"])
